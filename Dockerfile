@@ -16,12 +16,20 @@ RUN export LANGUAGE=de_DE.UTF-8 && \
 	export LC_ALL=de_DE.UTF-8 && \
 	locale-gen de_DE.UTF-8 && \
 	DEBIAN_FRONTEND=noninteractive dpkg-reconfigure locales
-  
+
 # Install Postgres and Java (for SonarScanner)
+# explicitly set user/group IDs
+RUN groupadd -r postgres --gid=999 && useradd -r -g postgres --uid=999 postgres
+
 RUN echo "deb http://apt.postgresql.org/pub/repos/apt/ jessie-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
   wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - && \
   DEBIAN_FRONTEND=noninteractive apt-get update -yqq && \
-  DEBIAN_FRONTEND=noninteractive apt-get install postgresql-9.5 postgresql-contrib-9.5 libpq-dev openjdk-8-jre-headless -yqq
+  DEBIAN_FRONTEND=noninteractive apt-get install postgresql-9.6 postgresql-contrib-9.6 libpq-dev openjdk-8-jre-headless -yqq
+
+RUN mkdir -p /var/run/postgresql && chown -R postgres /var/run/postgresql
+ENV PATH /usr/lib/postgresql/9.6/bin:$PATH
+ENV PGDATA /var/lib/postgresql/data
+RUN su postgres initdb
 
 RUN curl --location --output /opt/sonar-scanner-2.8.zip https://sonarsource.bintray.com/Distribution/sonar-scanner-cli/sonar-scanner-2.8.zip && \
   unzip /opt/sonar-scanner-2.8.zip -d /opt/ && \
