@@ -58,17 +58,23 @@ RUN curl --location --output /usr/local/bin/phpunit https://phar.phpunit.de/phpu
 
 # Adding letsencrypt-ca to truststore
 RUN export KEYSTORE=/etc/ssl/certs/java/cacerts && \
-    wget -P /tmp/ https://letsencrypt.org/certs/letsencryptauthorityx1.der && \
-    wget -P /tmp/ https://letsencrypt.org/certs/letsencryptauthorityx2.der && \
-    wget -P /tmp/ https://letsencrypt.org/certs/lets-encrypt-x1-cross-signed.der && \
-    wget -P /tmp/ https://letsencrypt.org/certs/lets-encrypt-x2-cross-signed.der && \
-    wget -P /tmp/ https://letsencrypt.org/certs/lets-encrypt-x3-cross-signed.der && \
-    wget -P /tmp/ https://letsencrypt.org/certs/lets-encrypt-x4-cross-signed.der && \
-    keytool -trustcacerts -keystore $KEYSTORE -storepass changeit -noprompt -importcert -alias isrgrootx1 -file /tmp/letsencryptauthorityx1.der && \
-    keytool -trustcacerts -keystore $KEYSTORE -storepass changeit -noprompt -importcert -alias isrgrootx2 -file /tmp/letsencryptauthorityx2.der && \
-    keytool -trustcacerts -keystore $KEYSTORE -storepass changeit -noprompt -importcert -alias letsencryptauthorityx1 -file /tmp/lets-encrypt-x1-cross-signed.der && \
-    keytool -trustcacerts -keystore $KEYSTORE -storepass changeit -noprompt -importcert -alias letsencryptauthorityx2 -file /tmp/lets-encrypt-x2-cross-signed.der && \
-    keytool -trustcacerts -keystore $KEYSTORE -storepass changeit -noprompt -importcert -alias letsencryptauthorityx3 -file /tmp/lets-encrypt-x3-cross-signed.der && \
-    keytool -trustcacerts -keystore $KEYSTORE -storepass changeit -noprompt -importcert -alias letsencryptauthorityx4 -file /tmp/lets-encrypt-x4-cross-signed.der
+    mkdir /usr/share/ca-certificates/le
+    wget -P /usr/share/ca-certificates/le/ https://letsencrypt.org/certs/letsencryptauthorityx1.der
+    wget -P /usr/share/ca-certificates/le/ https://letsencrypt.org/certs/letsencryptauthorityx2.der
+    wget -P /usr/share/ca-certificates/le/ https://letsencrypt.org/certs/lets-encrypt-x1-cross-signed.pem && \
+    wget -P /usr/share/ca-certificates/le/ https://letsencrypt.org/certs/lets-encrypt-x2-cross-signed.pem && \
+    wget -P /usr/share/ca-certificates/le/ https://letsencrypt.org/certs/lets-encrypt-x3-cross-signed.pem && \
+    wget -P /usr/share/ca-certificates/le/ https://letsencrypt.org/certs/lets-encrypt-x4-cross-signed.pem && \
+    echo "le/lets-encrypt-x1-cross-signed.pem" >> /etc/ca-certificates.conf
+    echo "le/lets-encrypt-x2-cross-signed.pem" >> /etc/ca-certificates.conf
+    echo "le/lets-encrypt-x3-cross-signed.pem" >> /etc/ca-certificates.conf
+    echo "le/lets-encrypt-x4-cross-signed.pem" >> /etc/ca-certificates.conf
+    keytool -trustcacerts -keystore $KEYSTORE -storepass changeit -noprompt -importcert -alias letsencryptx1 -file /usr/share/ca-certificates/le/letsencryptauthorityx1.der && \
+    keytool -trustcacerts -keystore $KEYSTORE -storepass changeit -noprompt -importcert -alias letsencryptx2 -file /usr/share/ca-certificates/le/letsencryptauthorityx2.der && \
+    keytool -trustcacerts -keystore $KEYSTORE -storepass changeit -noprompt -importcert -alias letsencryptauthorityx1 -file /usr/share/ca-certificates/le/lets-encrypt-x1-cross-signed.pem && \
+    keytool -trustcacerts -keystore $KEYSTORE -storepass changeit -noprompt -importcert -alias letsencryptauthorityx2 -file /usr/share/ca-certificates/le/lets-encrypt-x2-cross-signed.pem && \
+    keytool -trustcacerts -keystore $KEYSTORE -storepass changeit -noprompt -importcert -alias letsencryptauthorityx3 -file /usr/share/ca-certificates/le/lets-encrypt-x3-cross-signed.pem && \
+    keytool -trustcacerts -keystore $KEYSTORE -storepass changeit -noprompt -importcert -alias letsencryptauthorityx4 -file /usr/share/ca-certificates/le/lets-encrypt-x4-cross-signed.pem && \
+    update-ca-certificates --fresh
 
 CMD ["php", "-a"]
