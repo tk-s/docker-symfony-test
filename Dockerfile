@@ -11,11 +11,10 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
 # Configure timezone and locale
 RUN echo "Europe/Berlin" > /etc/timezone && \
 	dpkg-reconfigure -f noninteractive tzdata
-RUN export LANGUAGE=de_DE.utf8 && \
-	export LANG=de_DE.utf8 && \
-	export LC_ALL=de_DE.utf8 && \
-	locale-gen de_DE.utf8 && \
+RUN locale-gen de_DE.utf8 && \
 	DEBIAN_FRONTEND=noninteractive dpkg-reconfigure locales
+ENV LANGUAGE=de_DE.utf8 LANG=de_DE.utf8 LC_ALL=de_DE.utf8
+
 
 # Install Postgres and Java (for SonarScanner)
 # explicitly set user/group IDs
