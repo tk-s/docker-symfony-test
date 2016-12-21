@@ -33,7 +33,7 @@ ENV PGDATA /var/lib/postgresql/data
 USER postgres
 RUN initdb
 
-USER ROOT
+USER root
 
 RUN curl --location --output /opt/sonar-scanner-2.8.zip https://sonarsource.bintray.com/Distribution/sonar-scanner-cli/sonar-scanner-2.8.zip && \
   unzip /opt/sonar-scanner-2.8.zip -d /opt/ && \
