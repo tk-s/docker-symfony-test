@@ -44,6 +44,11 @@ RUN curl -sS https://getcomposer.org/installer | php && \
     curl --location --output /usr/local/bin/phpunit https://phar.phpunit.de/phpunit.phar && \
     chmod +x /usr/local/bin/phpunit
 
+# Install Node, npm, bower for assets
+RUN curl -sL https://deb.nodesource.com/setup_7.x | bash - && \
+    apt-get install -yyq nodejs && \
+    npm install -g bower
+
 # Adding letsencrypt-ca to truststore
 RUN export KEYSTORE=/etc/ssl/certs/java/cacerts && \
     mkdir /usr/share/ca-certificates/le && \
