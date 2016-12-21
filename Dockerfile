@@ -29,7 +29,11 @@ RUN echo "deb http://apt.postgresql.org/pub/repos/apt/ jessie-pgdg main" > /etc/
 RUN mkdir -p /var/run/postgresql && chown -R postgres /var/run/postgresql
 ENV PATH /usr/lib/postgresql/9.6/bin:$PATH
 ENV PGDATA /var/lib/postgresql/data
-RUN su postgres initdb
+
+USER postgres
+RUN initdb
+
+USER ROOT
 
 RUN curl --location --output /opt/sonar-scanner-2.8.zip https://sonarsource.bintray.com/Distribution/sonar-scanner-cli/sonar-scanner-2.8.zip && \
   unzip /opt/sonar-scanner-2.8.zip -d /opt/ && \
