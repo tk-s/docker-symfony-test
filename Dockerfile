@@ -75,7 +75,7 @@ ENV PATH /usr/lib/postgresql/9.6/bin:$PATH
 ENV PGDATA /var/lib/postgresql/data
 
 USER postgres
-RUN initdb -E 'UTF-8' --lc-collate='de_DE.utf8' --lc-ctype='de_DE.utf8'
+RUN initdb -E 'UTF-8' --lc-collate='de_DE.UTF-8' --lc-ctype='de_DE.UTF-8'
 
 USER root
 
