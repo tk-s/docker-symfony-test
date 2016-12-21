@@ -10,11 +10,12 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
 
 # Configure timezone and locale
 RUN echo "Europe/Berlin" > /etc/timezone && \
-	dpkg-reconfigure -f noninteractive tzdata
-RUN locale-gen de_DE.utf8 && \
-	DEBIAN_FRONTEND=noninteractive dpkg-reconfigure locales
+	dpkg-reconfigure -f noninteractive tzdata && \
+    echo "de_DE.UTF-8 UTF-8" > /etc/locale.gen && \
+    locale-gen de_DE.UTF-8 && \
+    DEBIAN_FRONTEND=noninteractive dpkg-reconfigure locales && \
+    /usr/sbin/update-locale LANG=de_DE.UTF-8
 ENV LANGUAGE=de_DE.UTF-8 LANG=de_DE.UTF-8 LC_ALL=de_DE.UTF-8
-
 
 # Install Postgres and Java (for SonarScanner)
 # explicitly set user/group IDs
@@ -37,13 +38,11 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update -yqq; \
 # Let's set the default timezone in cli config
 RUN sed -i 's/\;date\.timezone\ \=/date\.timezone\ \=\ Europe\/Berlin/g' /etc/php/7.0/cli/php.ini
 
-# Setup Composer
+# Setup Composer and PHPUnit
 RUN curl -sS https://getcomposer.org/installer | php && \
-	mv composer.phar /usr/local/bin/composer
-
-# Setup PHPUnit
-RUN curl --location --output /usr/local/bin/phpunit https://phar.phpunit.de/phpunit.phar && \
-  chmod +x /usr/local/bin/phpunit
+	mv composer.phar /usr/local/bin/composer && \
+    curl --location --output /usr/local/bin/phpunit https://phar.phpunit.de/phpunit.phar && \
+    chmod +x /usr/local/bin/phpunit
 
 # Adding letsencrypt-ca to truststore
 RUN export KEYSTORE=/etc/ssl/certs/java/cacerts && \
@@ -71,8 +70,7 @@ RUN curl --location --output /opt/sonar-scanner-2.8.zip https://sonarsource.bint
   chmod 777 -R /opt/sonar-scanner-2.8/bin
 
 RUN mkdir -p /var/run/postgresql && chown -R postgres /var/run/postgresql
-ENV PATH /usr/lib/postgresql/9.6/bin:$PATH
-ENV PGDATA /var/lib/postgresql/data
+ENV PATH=/usr/lib/postgresql/9.6/bin:$PATH PGDATA=/var/lib/postgresql/data
 
 USER postgres
 RUN initdb -E 'UTF-8' --lc-collate='de_DE.UTF-8' --lc-ctype='de_DE.UTF-8'
