@@ -13,7 +13,7 @@ RUN echo "Europe/Berlin" > /etc/timezone && \
 	dpkg-reconfigure -f noninteractive tzdata
 RUN locale-gen de_DE.utf8 && \
 	DEBIAN_FRONTEND=noninteractive dpkg-reconfigure locales
-ENV LANGUAGE=de_DE.utf8 LANG=de_DE.utf8 LC_ALL=de_DE.utf8
+ENV LANGUAGE=de_DE.UTF-8 LANG=de_DE.UTF-8 LC_ALL=de_DE.UTF-8
 
 
 # Install Postgres and Java (for SonarScanner)
