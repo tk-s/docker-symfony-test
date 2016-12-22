@@ -47,7 +47,7 @@ RUN curl -sS https://getcomposer.org/installer | php && \
 # Install Node, npm, bower for assets
 RUN curl -sL https://deb.nodesource.com/setup_7.x | bash - && \
     apt-get install -yyq nodejs && \
-    npm install -g bower
+    npm install -g bower && \
     ln -s /usr/bin/nodejs /usr/local/bin/node
 
 # Adding letsencrypt-ca to truststore
